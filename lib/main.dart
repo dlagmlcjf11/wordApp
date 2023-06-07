@@ -70,12 +70,12 @@ class _mainPageState extends State<mainPage> {
             label: '단어장',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.add),
-            label: 'ㄴㄴ',
+            icon: Icon(Icons.quiz),
+            label: '단어 테스트',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.add),
-            label: 'ㄴㄴ',
+            icon: Icon(Icons.ac_unit),
+            label: '오리',
           ),
         ],
         currentIndex: _selectedIndex,
