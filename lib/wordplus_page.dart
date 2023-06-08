@@ -43,6 +43,9 @@ class WordPlusPage extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(20.0),
             child: TextField(
+              decoration: InputDecoration(
+                hintText: '영단어를 입력하세요'
+              ),
               controller: wordController,
               keyboardType: TextInputType.text,
             ),
@@ -50,6 +53,9 @@ class WordPlusPage extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(20.0),
             child: TextField(
+              decoration: InputDecoration(
+                  hintText: '단어의 뜻을 입력하세요'
+              ),
               controller: wordMeanController,
               keyboardType: TextInputType.text,
             ),
@@ -61,7 +67,7 @@ class WordPlusPage extends StatelessWidget {
                 wordController.value.text,
               );
             },
-            child: Text('추가하기'),
+            child: Text('단어 추가하기'),
           ),
         ],
       ),
