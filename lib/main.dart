@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wordapp/wordplus_page.dart';
+import 'package:wordapp/wordtest_page.dart';
+import 'package:wordapp/duck_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -39,10 +41,21 @@ class _mainPageState extends State<mainPage> {
     });
   }
 
+  final List<Widget> _widgetOptions = <Widget>[
+    mainPage(),
+    WordTestPage(),
+    DuckPage(),
+  ];
+
   List<String> _wordList = [];
 
   @override
   void initState() {
+    _wordList.add('word');
+    _wordList.add('word');
+    _wordList.add('word');
+    _wordList.add('word');
+    _wordList.add('word');
     _wordList.add('word');
     super.initState();
   }
@@ -60,7 +73,7 @@ class _mainPageState extends State<mainPage> {
         builder: (BuildContext context) {
           return AlertDialog(
             //title: Text('제목'),
-            content: Text("'${_wordList[index]}' 삭제할까요?"),
+            content: Text("'${_wordList[index]}'를 삭제하려면 OK를 누르세요."),
             actions: [
               TextButton(
                 child: Text('OK'),
@@ -74,6 +87,49 @@ class _mainPageState extends State<mainPage> {
             ],
           );
         });
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.amberAccent,
+        title: Text(
+          'title',
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
+      ),
+      body: Column(
+        children: [
+
+          _topContent(),
+          _middleContent(),
+          SizedBox(height: 15,),
+          _bottomContent(),
+        ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.article_outlined),
+            label: '단어장',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.quiz),
+            label: '단어 테스트',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.ac_unit),
+            label: '오리',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.black,
+        onTap: _onItemTapped,
+      ),
+    );
   }
 
   Widget _topContent() {
@@ -136,45 +192,51 @@ class _mainPageState extends State<mainPage> {
         child: ListView.builder(
           itemCount: _wordList.length,
           itemBuilder: (context, index) {
-            return Container(
-              width: 400,
-              height: 60,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(6),
-                border: Border.all(
-                  width: 1,
+            return Padding(
+              padding: const EdgeInsets.all(3.0),
+              child: Container(
+                width: 400,
+                height: 60,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(6),
+                  border: Border.all(
+                    width: 1,
+                  ),
                 ),
-              ),
-              child: ListTile(
-                title: Container(
-                  margin: EdgeInsets.fromLTRB(0, 0, 0, 10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        width: 270,
-                        child: TextButton(
-                          onPressed: () {},
-                          child: Text(
-                            _wordList[index],
-                            textAlign: TextAlign.start,
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
+                child: Column(
+                  children: [
+                    ListTile(
+                      title: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            width: 270,
+                            child: TextButton(
+                              onPressed: () {},
+                              child: Text(
+                                _wordList[index],
+                                textAlign: TextAlign.start,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              _showAlert(context, index);
+                            },
+                            icon: Icon(
+                              Icons.delete,
                               color: Colors.black,
                             ),
                           ),
-                        ),
+                        ],
                       ),
-                      IconButton(
-                        onPressed: () {},
-                        icon: Icon(
-                          Icons.delete,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             );
@@ -185,46 +247,34 @@ class _mainPageState extends State<mainPage> {
   }
 
   Widget _bottomContent() {
-    return Text('bottom');
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.amberAccent,
-        title: Text(
-          'title',
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-      ),
-      body: Column(
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _topContent(),
-          _middleContent(),
-          _bottomContent(),
+          Container(
+            width: 150,
+            height: 150,
+            decoration: BoxDecoration(
+              border: Border.all(
+                width: 1,
+              ),
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+          Container(
+            width: 150,
+            height: 150,
+            decoration: BoxDecoration(
+              border: Border.all(
+                width: 1,
+              ),
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
         ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.article_outlined),
-            label: '단어장',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.quiz),
-            label: '단어 테스트',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.ac_unit),
-            label: '오리',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.black,
-        onTap: _onItemTapped,
       ),
     );
   }
+
 }
