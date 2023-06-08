@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wordapp/wordplus_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -7,25 +8,18 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
         primarySwatch: Colors.amber,
       ),
       home: mainPage(),
+      routes: {
+        '/wordplus': (context) => WordPlusPage(),
+      },
     );
   }
 }
@@ -43,6 +37,155 @@ class _mainPageState extends State<mainPage> {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  List<String> _wordList = [];
+
+  @override
+  void initState() {
+    _wordList.add('word');
+    super.initState();
+  }
+
+  void _wordPlusNavigation(BuildContext context) async {
+    final result = await Navigator.pushNamed(context, '/wordplus');
+    setState(() {
+      _wordList.add(result as String);
+    });
+  }
+
+  _showAlert(context, index) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            //title: Text('제목'),
+            content: Text("'${_wordList[index]}' 삭제할까요?"),
+            actions: [
+              TextButton(
+                child: Text('OK'),
+                onPressed: () {
+                  setState(() {
+                    _wordList.removeAt(index);
+                  });
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          );
+        });
+  }
+
+  Widget _topContent() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        children: [
+          Container(
+            width: 400,
+            height: 60,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(6),
+              border: Border.all(
+                width: 1,
+              ),
+              shape: BoxShape.rectangle,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.18),
+                  blurRadius: 5.0,
+                  spreadRadius: 0.0,
+                  offset: const Offset(0, 7),
+                ),
+              ],
+            ),
+            child: TextButton(
+              onPressed: () {
+                _wordPlusNavigation(context);
+              },
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.add,
+                    color: Colors.black,
+                  ),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  Text(
+                    '단어 추가하기',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _middleContent() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: SizedBox(
+        height: 330,
+        child: ListView.builder(
+          itemCount: _wordList.length,
+          itemBuilder: (context, index) {
+            return Container(
+              width: 400,
+              height: 60,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(6),
+                border: Border.all(
+                  width: 1,
+                ),
+              ),
+              child: ListTile(
+                title: Container(
+                  margin: EdgeInsets.fromLTRB(0, 0, 0, 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        width: 270,
+                        child: TextButton(
+                          onPressed: () {},
+                          child: Text(
+                            _wordList[index],
+                            textAlign: TextAlign.start,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {},
+                        icon: Icon(
+                          Icons.delete,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _bottomContent() {
+    return Text('bottom');
   }
 
   @override
@@ -84,61 +227,4 @@ class _mainPageState extends State<mainPage> {
       ),
     );
   }
-}
-
-Widget _topContent() {
-  return Padding(
-    padding: const EdgeInsets.all(8.0),
-    child: Column(
-      children: [
-        Container(
-          width: 400,
-          height: 60,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(6),
-            border: Border.all(
-              width: 1,
-            ),
-            shape: BoxShape.rectangle,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.18),
-                blurRadius: 5.0,
-                spreadRadius: 0.0,
-                offset: const Offset(0, 7),
-              ),
-            ],
-          ),
-          child: TextButton(
-              onPressed: () {},
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.add,
-                    color: Colors.black,
-                  ),
-                  SizedBox(
-                    width: 5,
-                  ),
-                  Text(
-                    '단어 추가하기',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              )),
-        ),
-      ],
-    ),
-  );
-}
-
-Widget _middleContent() {
-  return Text('middle');
-}
-
-Widget _bottomContent() {
-  return Text('bottom');
 }
