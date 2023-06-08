@@ -89,7 +89,6 @@ class _mainPageState extends State<mainPage> {
         });
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -97,17 +96,27 @@ class _mainPageState extends State<mainPage> {
         backgroundColor: Colors.amberAccent,
         title: Text(
           'title',
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         centerTitle: true,
       ),
       body: Column(
         children: [
-
-          _topContent(),
-          _middleContent(),
-          SizedBox(height: 15,),
-          _bottomContent(),
+          Container(
+            child: Column(
+              children: [
+                _topContent(),
+                _middleContent(),
+                SizedBox(
+                  height: 15,
+                ),
+                _bottomContent(),
+              ],
+            ),
+          ),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -276,5 +285,4 @@ class _mainPageState extends State<mainPage> {
       ),
     );
   }
-
 }
