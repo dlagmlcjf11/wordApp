@@ -44,7 +44,7 @@ class WordTestPage extends StatelessWidget {
                 ),
                 child: Center(
                   child: Text(
-                    '단어',
+                    '단어', //있는 단어 리스트 불러와서 호출
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 30,
@@ -63,7 +63,9 @@ class WordTestPage extends StatelessWidget {
               height: 5,
             ),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                //단어의 뜻이 일치한지 확인 후 맞으면 물고기 1개 획득,
+              },
               child: Text('확인', style: TextStyle(fontWeight: FontWeight.bold),),
             ),
           ],
