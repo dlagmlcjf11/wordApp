@@ -21,6 +21,7 @@ class MyApp extends StatelessWidget {
       home: mainPage(),
       routes: {
         '/wordplus': (context) => WordPlusPage(),
+        '/quiz': (context) => WordTestPage(),
       },
     );
   }
@@ -34,19 +35,8 @@ class mainPage extends StatefulWidget {
 }
 
 class _mainPageState extends State<mainPage> {
-  int _selectedIndex = 0;
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
-  final List<Widget> _widgetOptions = <Widget>[
-    mainPage(),
-    WordTestPage(),
-    DuckPage(),
-  ];
-
+  int _fishNum = 0;
+  int _quizNum = 0;
   List<String> _wordList = [];
 
   @override
@@ -65,6 +55,9 @@ class _mainPageState extends State<mainPage> {
     setState(() {
       _wordList.add(result as String);
     });
+  }
+  void _wordTestNavigation(BuildContext context) async {
+    final result = await Navigator.pushNamed(context, '/quiz');
   }
 
   _showAlert(context, index) {
@@ -91,53 +84,62 @@ class _mainPageState extends State<mainPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.amberAccent,
-        title: Text(
-          'title',
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        centerTitle: true,
-      ),
-      body: Column(
-        children: [
-          //_widgetOptions.elementAt(_selectedIndex), Why...
-          Container(
-            child: Column(
-              children: [
-                _topContent(),
-                _middleContent(),
-                SizedBox(
-                  height: 15,
-                ),
-                _bottomContent(),
-              ],
+    return DefaultTabController(
+      length: 3,
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.amberAccent,
+          title: Text(
+            'title',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
             ),
           ),
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.article_outlined),
-            label: '단어장',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.quiz),
-            label: '단어 테스트',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.ac_unit),
-            label: '오리',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.black,
-        onTap: _onItemTapped,
+          centerTitle: true,
+        ),
+        body: TabBarView(
+          children: [
+            Column(
+              children: [
+                Container(
+                  child: Column(
+                    children: [
+                      _topContent(),
+                      _middleContent(),
+                      SizedBox(
+                        height: 15,
+                      ),
+                      _bottomContent(),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            Container(
+              child: WordTestPage(),
+            ),
+            Container(
+              child: DuckPage(),
+            ),
+          ],
+        ),
+        bottomNavigationBar: TabBar(
+          tabs: [
+            Tab(
+              icon: Icon(Icons.article_outlined),
+              text: '단어장',
+            ),
+            Tab(
+              icon: Icon(Icons.quiz),
+              text: '단어 테스트',
+            ),
+            Tab(
+              icon: Icon(Icons.favorite),
+              text: '오리',
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -272,15 +274,71 @@ class _mainPageState extends State<mainPage> {
               ),
               borderRadius: BorderRadius.circular(10),
             ),
+            child: Stack(
+              children: [
+                Image.asset('assets/fish.png'),
+                Positioned(
+                  right: 0,
+                  bottom: 0,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Positioned(
+                      child: Text(
+                        '$_fishNum개',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 25,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
           Container(
             width: 150,
             height: 150,
             decoration: BoxDecoration(
+              color: Colors.amberAccent,
               border: Border.all(
                 width: 1,
               ),
               borderRadius: BorderRadius.circular(10),
+            ),
+            child: InkWell(
+              onTap: (){
+                _wordTestNavigation(context);
+              },
+              child: Stack(
+                children: [
+                  Positioned(
+                    child: Container(
+                      child: Image.asset('assets/quiz.png'),
+                      width: 80,
+                      height: 80,
+                    ),
+                    top: 28,
+                    left: 33,
+                  ),
+                  Positioned(
+                    right: 0,
+                    bottom: 0,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        '바로가기',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 25,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
