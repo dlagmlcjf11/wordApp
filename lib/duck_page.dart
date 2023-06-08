@@ -21,6 +21,13 @@ class MyApp extends StatelessWidget {
 }
 
 class DuckPage extends StatelessWidget {
+  int _exp = 0;
+  int _first_exp = 30;
+  int _second_exp = 40;
+  int _thrid_exp = 50;
+  int _level = 1;
+  int _fishNum = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,15 +60,31 @@ class DuckPage extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Text('Lv.1 노래 듣는 오리', style: TextStyle(fontWeight: FontWeight.bold),),
-                Text('경험치: 0', style: TextStyle(fontWeight: FontWeight.bold),),
+                Text('Lv.$_level 노래 듣는 오리', style: TextStyle(fontWeight: FontWeight.bold),),
+                Text('경험치: $_exp/$_first_exp', style: TextStyle(fontWeight: FontWeight.bold),),
+                Text('현재 밥 개수: 0', style: TextStyle(fontWeight: FontWeight.bold),),
               ],
             ),
             SizedBox(
               height: 10,
             ),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                _fishNum -= 1;
+                _exp += 10;
+                if(_fishNum == 0) {
+                  //더이상 먹일 수 없다는 알람
+                }
+                if(_exp >= _first_exp) {
+                  _level +=1;
+                  //duck_second_png 호출
+                } else if(_exp >= _second_exp) {
+                  _level +=1;
+                  //duck_thrid.png 호출
+                } else if(_exp >= _thrid_exp) {
+                  //오리가 더이상 성장 할 수 없다는 알람
+                }
+              },
               child: Text(
                 '밥 주기',
                 style: TextStyle(fontWeight: FontWeight.bold),
