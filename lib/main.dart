@@ -105,6 +105,7 @@ class _mainPageState extends State<mainPage> {
       ),
       body: Column(
         children: [
+          //_widgetOptions.elementAt(_selectedIndex), Why...
           Container(
             child: Column(
               children: [
@@ -265,6 +266,7 @@ class _mainPageState extends State<mainPage> {
             width: 150,
             height: 150,
             decoration: BoxDecoration(
+              color: Colors.amberAccent,
               border: Border.all(
                 width: 1,
               ),
