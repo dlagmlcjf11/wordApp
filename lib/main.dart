@@ -27,59 +27,63 @@ class MyApp extends StatelessWidget {
   }
 }
 
+
 class mainPage extends StatefulWidget {
   const mainPage({Key? key}) : super(key: key);
 
   @override
-  State<mainPage> createState() => _mainPageState();
+  State<mainPage> createState() => mainPageState();
 }
 
-class _mainPageState extends State<mainPage> {
-  int _fishNum = 0;
-  int _quizNum = 0;
-  List<String> _wordList = [];
+class mainPageState extends State<mainPage> {
+  int fishNum = 0;
+  int quizNum = 0;
+  List<String> wordList = [];
+
 
   @override
   void initState() {
-    _wordList.add('word');
-    _wordList.add('word');
-    _wordList.add('word');
-    _wordList.add('word');
-    _wordList.add('word');
-    _wordList.add('word');
+    wordList.add('word');
+    wordList.add('word');
+    wordList.add('word');
+    wordList.add('word');
+    wordList.add('word');
+    wordList.add('word');
     super.initState();
   }
 
   void _wordPlusNavigation(BuildContext context) async {
     final result = await Navigator.pushNamed(context, '/wordplus');
     setState(() {
-      _wordList.add(result as String);
+      wordList.add(result as String);
     });
   }
+
   void _wordTestNavigation(BuildContext context) async {
     final result = await Navigator.pushNamed(context, '/quiz');
   }
 
   _showAlert(context, index) {
     showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            //title: Text('제목'),
-            content: Text("'${_wordList[index]}'를 삭제하려면 OK를 누르세요."),
-            actions: [
-              TextButton(
-                child: Text('OK'),
-                onPressed: () {
-                  setState(() {
-                    _wordList.removeAt(index);
-                  });
-                  Navigator.pop(context);
-                },
-              ),
-            ],
-          );
-        });
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          //title: Text('제목'),
+          content: Text("'${wordList[index]}'를 삭제하려면 OK를 누르세요."),
+          actions: [
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                setState(() {
+                  wordList.removeAt(index);
+                });
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -202,7 +206,7 @@ class _mainPageState extends State<mainPage> {
       child: SizedBox(
         height: 330,
         child: ListView.builder(
-          itemCount: _wordList.length,
+          itemCount: wordList.length,
           itemBuilder: (context, index) {
             return Padding(
               padding: const EdgeInsets.all(3.0),
@@ -226,7 +230,7 @@ class _mainPageState extends State<mainPage> {
                             child: TextButton(
                               onPressed: () {},
                               child: Text(
-                                _wordList[index],
+                                wordList[index],
                                 textAlign: TextAlign.start,
                                 style: TextStyle(
                                   fontSize: 16,
@@ -284,7 +288,7 @@ class _mainPageState extends State<mainPage> {
                     padding: const EdgeInsets.all(8.0),
                     child: Positioned(
                       child: Text(
-                        '$_fishNum개',
+                        '$fishNum개',
                         style: TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
@@ -308,7 +312,7 @@ class _mainPageState extends State<mainPage> {
               borderRadius: BorderRadius.circular(10),
             ),
             child: InkWell(
-              onTap: (){
+              onTap: () {
                 _wordTestNavigation(context);
               },
               child: Stack(
@@ -346,3 +350,6 @@ class _mainPageState extends State<mainPage> {
     );
   }
 }
+
+
+

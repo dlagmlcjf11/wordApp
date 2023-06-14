@@ -41,20 +41,26 @@ class WordPlusPage extends StatelessWidget {
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(20.0),
+            padding: const EdgeInsets.all(10.0),
             child: TextField(
               decoration: InputDecoration(
-                hintText: '영단어를 입력하세요'
+                  hintText: '영단어를 입력하세요',
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
               ),
               controller: wordController,
               keyboardType: TextInputType.text,
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(20.0),
+            padding: const EdgeInsets.all(10.0),
             child: TextField(
               decoration: InputDecoration(
-                  hintText: '단어의 뜻을 입력하세요'
+                  hintText: '단어의 뜻을 입력하세요',
+                  enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                  ),
               ),
               controller: wordMeanController,
               keyboardType: TextInputType.text,

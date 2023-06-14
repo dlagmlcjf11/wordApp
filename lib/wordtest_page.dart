@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wordapp/main.dart';
 
 void main() {
   runApp(const MyApp());
@@ -20,7 +21,32 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class WordTestPage extends StatelessWidget {
+class WordTestPage extends StatefulWidget {
+  @override
+  State<WordTestPage> createState() => _WordTestPageState();
+}
+
+class _WordTestPageState extends State<WordTestPage> {
+  mainPageState main = new mainPageState();
+
+  String currentWord = "";
+  TextEditingController answerController = TextEditingController();
+
+  String start() {
+    if (main.wordList.isNotEmpty) {
+      currentWord = main.wordList[0];
+      print('$currentWord 현재');
+      print('${main.wordList[0]} 리스트');
+    }
+    return currentWord;
+  }
+
+  @override
+  void dispose() {
+    answerController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,7 +70,7 @@ class WordTestPage extends StatelessWidget {
                 ),
                 child: Center(
                   child: Text(
-                    '단어', //있는 단어 리스트 불러와서 호출
+                    start(),
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 30,
@@ -56,6 +82,7 @@ class WordTestPage extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(12.0),
               child: TextField(
+                controller: answerController,
                 decoration: InputDecoration(hintText: '단어의 뜻을 입력하세요'),
               ),
             ),
@@ -64,9 +91,19 @@ class WordTestPage extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                //단어의 뜻이 일치한지 확인 후 맞으면 물고기 1개 획득,
+                setState(
+                  () {
+                    String userAnswer = answerController.text.trim();
+                    if (userAnswer == currentWord) {
+                      main.fishNum += 1;
+                    }
+                  },
+                );
               },
-              child: Text('확인', style: TextStyle(fontWeight: FontWeight.bold),),
+              child: Text(
+                '확인',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
             ),
           ],
         ),

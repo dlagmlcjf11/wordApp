@@ -20,13 +20,20 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class DuckPage extends StatelessWidget {
+class DuckPage extends StatefulWidget {
+  @override
+  State<DuckPage> createState() => _DuckPageState();
+}
+
+class _DuckPageState extends State<DuckPage> {
   int _exp = 0;
-  int _first_exp = 30;
-  int _second_exp = 40;
-  int _thrid_exp = 50;
   int _level = 1;
-  int _fishNum = 0;
+  int _fishNum = 8;
+  int _expCount = 0;
+  String _duckName = "노래 듣는 ";
+
+  List<int> _expList = [30, 40, 50];
+  Image _img = Image.asset('assets/duck_first.png');
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +57,7 @@ class DuckPage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Center(
-                  child: Image.asset('assets/duck_first.png'),
+                  child: _img,
                 ),
               ),
             ),
@@ -60,9 +67,18 @@ class DuckPage extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Text('Lv.$_level 노래 듣는 오리', style: TextStyle(fontWeight: FontWeight.bold),),
-                Text('경험치: $_exp/$_first_exp', style: TextStyle(fontWeight: FontWeight.bold),),
-                Text('현재 밥 개수: 0', style: TextStyle(fontWeight: FontWeight.bold),),
+                Text(
+                  'Lv.$_level $_duckName오리',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  '경험치: $_exp/${_expList[_expCount]}',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  '현재 밥 개수: $_fishNum',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
               ],
             ),
             SizedBox(
@@ -70,20 +86,36 @@ class DuckPage extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                _fishNum -= 1;
-                _exp += 10;
-                if(_fishNum == 0) {
-                  //더이상 먹일 수 없다는 알람
-                }
-                if(_exp >= _first_exp) {
-                  _level +=1;
-                  //duck_second_png 호출
-                } else if(_exp >= _second_exp) {
-                  _level +=1;
-                  //duck_thrid.png 호출
-                } else if(_exp >= _thrid_exp) {
-                  //오리가 더이상 성장 할 수 없다는 알람
-                }
+                setState(
+                  () {
+                    if (_fishNum > 0 && _exp != 50) {
+                      _fishNum -= 1;
+                      _exp += 10;
+                      if (_fishNum == 0) {
+                        //더이상 먹일 수 없다는 알람
+                      }
+                      if (_exp == _expList[0]) {
+                        _level += 1;
+                        _expCount++;
+                        _duckName = "보드 타는 ";
+                        _img = Image.asset('assets/duck_second.png');
+                      } else if (_exp == _expList[1]) {
+                        _level += 1;
+                        _expCount++;
+                        _duckName = "서핑 하는 ";
+                        _img = Image.asset('assets/duck_third.png');
+                      }
+                    }
+                    if (_fishNum > 0 && _exp == _expList[2]) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: const Text('오리가 더 이상 밥을 먹지 않습니다!'),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+                    }
+                  },
+                );
               },
               child: Text(
                 '밥 주기',
