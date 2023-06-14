@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wordapp/main.dart';
 
 void main() {
   runApp(const MyApp());
@@ -26,9 +27,10 @@ class DuckPage extends StatefulWidget {
 }
 
 class _DuckPageState extends State<DuckPage> {
+  mainPageState main = new mainPageState();
   int _exp = 0;
   int _level = 1;
-  int _fishNum = 8;
+  int _fishNum = 0;
   int _expCount = 0;
   String _duckName = "노래 듣는 ";
 
