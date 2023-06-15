@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wordapp/wordplus_page.dart';
-import 'package:wordapp/wordtest_page.dart';
-import 'package:wordapp/duck_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(const MyApp());
@@ -21,12 +19,10 @@ class MyApp extends StatelessWidget {
       home: mainPage(),
       routes: {
         '/wordplus': (context) => WordPlusPage(),
-        '/quiz': (context) => WordTestPage(),
       },
     );
   }
 }
-
 
 class mainPage extends StatefulWidget {
   const mainPage({Key? key}) : super(key: key);
@@ -36,20 +32,57 @@ class mainPage extends StatefulWidget {
 }
 
 class mainPageState extends State<mainPage> {
+  String? word = "";
+  String? mean = "";
+  mainPageState({this.word, this.mean});
   int fishNum = 0;
   int quizNum = 0;
   List<String> wordList = [];
+  List<String> meanList = [];
+  int _exp = 0;
+  int _level = 1;
+  int _expCount = 0;
+  String _duckName = "노래 듣는 ";
+  int listIdx = 0;
 
+  List<int> _expList = [30, 40, 50];
+  Image _img = Image.asset('assets/duck_first.png');
+
+  String currentWord = "";
+  TextEditingController answerController = TextEditingController();
+
+  void getWord() async {
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+    if (pref.getString('word') == null) {
+      word = " ";
+    } else {
+      word = pref.getString('word');
+    }
+    if (pref.getString('mean') == null) {
+      mean = " ";
+    } else {
+      mean = pref.getString('mean');
+    }
+    print(word);
+    print(mean);
+    wordList.add("$word");
+    meanList.add("$mean");
+  }
 
   @override
   void initState() {
     wordList.add('word');
-    wordList.add('word');
-    wordList.add('word');
-    wordList.add('word');
-    wordList.add('word');
-    wordList.add('word');
+    meanList.add("단어");
+    if (wordList.isNotEmpty) {
+      currentWord = wordList[listIdx];
+    }
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    answerController.dispose();
+    super.dispose();
   }
 
   void _wordPlusNavigation(BuildContext context) async {
@@ -59,11 +92,7 @@ class mainPageState extends State<mainPage> {
     });
   }
 
-  void _wordTestNavigation(BuildContext context) async {
-    final result = await Navigator.pushNamed(context, '/quiz');
-  }
-
-  _showAlert(context, index) {
+  _showDeleteAlert(context, index) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -86,6 +115,29 @@ class mainPageState extends State<mainPage> {
     );
   }
 
+  _showSucAlert(context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: 300,
+          child: AlertDialog(
+            title: Text('퀴즈를 다 풀었습니다! '),
+            content: Text('물고기를 얻었어요! 현재 물고기 : $fishNum'),
+            actions: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text('닫기'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -101,6 +153,19 @@ class mainPageState extends State<mainPage> {
             ),
           ),
           centerTitle: true,
+          actions: [
+            IconButton(
+              onPressed: () {
+                setState(() {
+                  getWord();
+                });
+              },
+              icon: Icon(
+                Icons.abc,
+                size: 30,
+              ),
+            ),
+          ],
         ),
         body: TabBarView(
           children: [
@@ -121,10 +186,166 @@ class mainPageState extends State<mainPage> {
               ],
             ),
             Container(
-              child: WordTestPage(),
+              child: Scaffold(
+                appBar: AppBar(
+                  title: Text(
+                    '단어 퀴즈',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+                body: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Container(
+                          width: 350,
+                          height: 350,
+                          decoration: BoxDecoration(
+                            border: Border.all(width: 1),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Center(
+                            child: Text(
+                              currentWord,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 30,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: TextField(
+                          controller: answerController,
+                          decoration: InputDecoration(hintText: '단어의 뜻을 입력하세요'),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          setState(
+                            () {
+                              print("${answerController.text.trim()}");
+
+                              if (answerController.text.trim() == currentWord &&
+                                  wordList.length - 1 > listIdx) {
+                                listIdx += 1;
+                                currentWord = wordList[listIdx];
+                              } else if (listIdx == wordList.length - 1) {
+                                fishNum += 5;
+                                _showSucAlert(context);
+                                quizNum += 1;
+                                listIdx = 0;
+                                currentWord = wordList[listIdx];
+                              }
+                            },
+                          );
+                        },
+                        child: Text(
+                          '확인',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
             Container(
-              child: DuckPage(),
+              child: Scaffold(
+                appBar: AppBar(
+                  title: Text(
+                    '오리',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+                body: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Container(
+                          width: 350,
+                          height: 350,
+                          decoration: BoxDecoration(
+                            border: Border.all(width: 1),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Center(
+                            child: _img,
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Text(
+                            'Lv.$_level $_duckName오리',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            '경험치: $_exp/${_expList[_expCount]}',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            '현재 밥 개수: $fishNum',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          setState(
+                            () {
+                              if (fishNum > 0 && _exp != 50) {
+                                fishNum -= 1;
+                                _exp += 10;
+                                if (fishNum == 0) {
+                                  //더이상 먹일 수 없다는 알람
+                                }
+                                if (_exp == _expList[0]) {
+                                  _level += 1;
+                                  _expCount++;
+                                  _duckName = "보드 타는 ";
+                                  _img = Image.asset('assets/duck_second.png');
+                                } else if (_exp == _expList[1]) {
+                                  _level += 1;
+                                  _expCount++;
+                                  _duckName = "서핑 하는 ";
+                                  _img = Image.asset('assets/duck_third.png');
+                                }
+                              }
+                              if (fishNum > 0 && _exp == _expList[2]) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: const Text('오리가 더 이상 밥을 먹지 않습니다!'),
+                                    duration: Duration(seconds: 2),
+                                  ),
+                                );
+                              }
+                            },
+                          );
+                        },
+                        child: Text(
+                          '밥 주기',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
           ],
         ),
@@ -228,7 +449,11 @@ class mainPageState extends State<mainPage> {
                           Container(
                             width: 270,
                             child: TextButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                setState(() {
+                                  
+                                });
+                              },
                               child: Text(
                                 wordList[index],
                                 textAlign: TextAlign.start,
@@ -242,7 +467,7 @@ class mainPageState extends State<mainPage> {
                           ),
                           IconButton(
                             onPressed: () {
-                              _showAlert(context, index);
+                              _showDeleteAlert(context, index);
                             },
                             icon: Icon(
                               Icons.delete,
@@ -312,9 +537,7 @@ class mainPageState extends State<mainPage> {
               borderRadius: BorderRadius.circular(10),
             ),
             child: InkWell(
-              onTap: () {
-                _wordTestNavigation(context);
-              },
+              onTap: () {},
               child: Stack(
                 children: [
                   Positioned(
@@ -332,7 +555,7 @@ class mainPageState extends State<mainPage> {
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
-                        '바로가기',
+                        '성공 : $quizNum',
                         style: TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
@@ -351,5 +574,118 @@ class mainPageState extends State<mainPage> {
   }
 }
 
+class WordPlusPage extends StatefulWidget {
+  @override
+  State<WordPlusPage> createState() => WordPlusPageState();
+}
 
+class WordPlusPageState extends State<WordPlusPage> {
+  String word = "";
+  String mean = "";
+  final _formKey = GlobalKey<FormState>();
+  TextEditingController wordController = TextEditingController();
+  TextEditingController wordMeanController = TextEditingController();
 
+  static void insertWord(String word, String mean) async {
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+    pref.setString('word', word);
+    pref.setString('mean', mean);
+  }
+
+  @override
+  void dispose() {
+    wordController.dispose();
+    wordMeanController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.amberAccent,
+        title: Text(
+          '단어 추가',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        centerTitle: true,
+      ),
+      body: Form(
+        key: _formKey,
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: TextFormField(
+                decoration: InputDecoration(
+                  hintText: '영단어를 입력하세요',
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                ),
+                validator: (value) {
+                  if (value!.trim().isEmpty) {
+                    return '영단어를 입력하세요.';
+                  }
+                  return null;
+                },
+                onSaved: (value) {
+                  setState(() {
+                    this.word = value.toString();
+                  });
+                },
+                controller: wordController,
+                keyboardType: TextInputType.text,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: TextFormField(
+                decoration: InputDecoration(
+                  hintText: '단어의 뜻을 입력하세요',
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                ),
+                validator: (value) {
+                  if (value!.trim().isEmpty) {
+                    return '뜻을 입력하세요.';
+                  }
+                  return null;
+                },
+                onSaved: (value) {
+                  setState(() {
+                    this.mean = value.toString();
+                  });
+                },
+                controller: wordMeanController,
+                keyboardType: TextInputType.text,
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                if (_formKey.currentState!.validate()) {
+                  Navigator.pop(context);
+                  _formKey.currentState!.save();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: const Text('단어 추가 완료!'),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                  print(word);
+                  print(mean);
+                  insertWord(word, mean);
+                }
+              },
+              child: Text('단어 추가하기'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
