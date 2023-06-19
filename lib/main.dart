@@ -44,6 +44,7 @@ class mainPageState extends State<mainPage> {
   int _expCount = 0;
   String _duckName = "노래 듣는 ";
   int listIdx = 0;
+  bool isMean = false;
 
   List<int> _expList = [30, 40, 50];
   Image _img = Image.asset('assets/duck_first.png');
@@ -71,8 +72,8 @@ class mainPageState extends State<mainPage> {
 
   @override
   void initState() {
-    wordList.add('word');
-    meanList.add("단어");
+    wordList.add('duck');
+    meanList.add("오리");
     if (wordList.isNotEmpty) {
       currentWord = wordList[listIdx];
     }
@@ -97,7 +98,6 @@ class mainPageState extends State<mainPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          //title: Text('제목'),
           content: Text("'${wordList[index]}'를 삭제하려면 OK를 누르세요."),
           actions: [
             TextButton(
@@ -138,6 +138,28 @@ class mainPageState extends State<mainPage> {
     );
   }
 
+  _showMean(context, index) {
+    return isMean ? meanList[index] : wordList[index];
+  }
+
+  _showSucSnack() {
+    return ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text('정답이에요!'),
+        duration: Duration(seconds: 2),
+      ),
+    );
+  }
+
+  _showFailSnack() {
+    return ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text('틀렸어요!'),
+        duration: Duration(seconds: 2),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -146,13 +168,31 @@ class mainPageState extends State<mainPage> {
         appBar: AppBar(
           backgroundColor: Colors.amberAccent,
           title: Text(
-            'title',
+            'Worduck',
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
             ),
           ),
           centerTitle: true,
+          leading: TextButton(
+            onPressed: () {
+              setState(() {
+                if (isMean == false) {
+                  isMean = true;
+                } else {
+                  isMean = false;
+                }
+              });
+            },
+            child: Text(
+              "한/영",
+              style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
           actions: [
             IconButton(
               onPressed: () {
@@ -161,7 +201,7 @@ class mainPageState extends State<mainPage> {
                 });
               },
               icon: Icon(
-                Icons.abc,
+                Icons.refresh,
                 size: 30,
               ),
             ),
@@ -230,10 +270,16 @@ class mainPageState extends State<mainPage> {
                         onPressed: () {
                           setState(
                             () {
-                              print("${answerController.text.trim()}");
-
-                              if (answerController.text.trim() == currentWord &&
+                              if (answerController.text.trim() != meanList[listIdx]) {
+                                _showFailSnack();
+                                answerController.text = "";
+                                return;
+                              }
+                              if (answerController.text.trim() ==
+                                      meanList[listIdx] &&
                                   wordList.length - 1 > listIdx) {
+                                _showSucSnack();
+                                answerController.text = "";
                                 listIdx += 1;
                                 currentWord = wordList[listIdx];
                               } else if (listIdx == wordList.length - 1) {
@@ -242,6 +288,7 @@ class mainPageState extends State<mainPage> {
                                 quizNum += 1;
                                 listIdx = 0;
                                 currentWord = wordList[listIdx];
+                                answerController.text = "";
                               }
                             },
                           );
@@ -449,13 +496,9 @@ class mainPageState extends State<mainPage> {
                           Container(
                             width: 270,
                             child: TextButton(
-                              onPressed: () {
-                                setState(() {
-                                  
-                                });
-                              },
+                              onPressed: () {},
                               child: Text(
-                                wordList[index],
+                                _showMean(context, index),
                                 textAlign: TextAlign.start,
                                 style: TextStyle(
                                   fontSize: 16,
@@ -672,7 +715,7 @@ class WordPlusPageState extends State<WordPlusPage> {
                   _formKey.currentState!.save();
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: const Text('단어 추가 완료!'),
+                      content: const Text('단어 추가 완료! 새로고침을 누르세요.'),
                       duration: Duration(seconds: 2),
                     ),
                   );
